@@ -35,7 +35,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
     db := dbConn()
     defer db.Close()
 
-    rows, err := db.Query("SELECT EmployeeId, FirstName, LastName, Birthdate, Address, DepartementId, PostId, DateOfJoin, Phone, Email FROM employee")
+    rows, err := db.Query("SELECT * FROM employee")
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
