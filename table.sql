@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 91793a69d9e7820d45b4db0d0a6da92b808a2da4
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE employee (
@@ -78,3 +74,4 @@ INSERT INTO hierarchy (EmployeeId, ManagerId) VALUES
     ((SELECT EmployeeId FROM employee WHERE FirstName = 'Bob' AND LastName = 'Martin'), (SELECT EmployeeId FROM employee WHERE FirstName = 'Alice' AND LastName = 'Dupont')),
     ((SELECT EmployeeId FROM employee WHERE FirstName = 'Claire' AND LastName = 'Leroy'), (SELECT EmployeeId FROM employee WHERE FirstName = 'Alice' AND LastName = 'Dupont')),
     ((SELECT EmployeeId FROM employee WHERE FirstName = 'David' AND LastName = 'Bernard'), (SELECT EmployeeId FROM employee WHERE FirstName = 'Alice' AND LastName = 'Dupont')),
+    ((SELECT EmployeeId FROM employee WHERE FirstName = 'Emma' AND LastName = 'Durand'), (SELECT EmployeeId FROM employee WHERE FirstName = 'Alice' AND LastName = 'Dupont'));
