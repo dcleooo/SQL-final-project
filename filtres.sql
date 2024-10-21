@@ -36,3 +36,4 @@ JOIN employee m ON h.ManagerId = m.EmployeeId
 WHERE p.Name = 'Manager'
   AND (strftime('%Y', 'now') - strftime('%Y', e.DateOfJoin)) > 5
   AND m.FirstName = 'Alice' AND m.LastName = 'Dupont';
+  
