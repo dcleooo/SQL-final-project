@@ -4,11 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Management</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    
 </head>
 <body>
     <header>
         <h1>Employee Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/departments">Departments</a></li>
+                <li><a href="/posts">Posts</a>
+                <li><a href="/employees">Managers</a>
+                <li><a href="/manage">Manage Employee</a></li>
+            </ul>
+        </nav>
     </header>
     <main>
         <section id="add-employee">
@@ -36,7 +46,7 @@
                 <label for="post_id">Post:</label>
                 <select id="post_id" name="post_id" required>
                     {{range .Posts}}
-                    <option value="{{.PostId}}">{{.Name}}</option>
+                    <option value="{{.PostId}}"> {{.Name}} </option>
                     {{end}}
                 </select><br><br>
         
@@ -52,43 +62,44 @@
                 <button type="submit">Add Employee</button>
             </form>
         </section>
-        
-        <section id="employee-list">
-            <h2>Employee List</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Employee ID</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Birthdate</th>
-                        <th>Address</th>
-                        <th>Department</th>
-                        <th>Post</th>
-                        <th>Date of Join</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
+
+        <section id="delete-employee">
+            <h2>Delete Employee</h2>
+            <form action="/delete-employee" method="POST">
+                <label for="employee_id">Employee ID:</label>
+                <select id="employee_id" name ="employee_id" required>
                     {{range .Employees}}
-                    <tr>
-                        <td>{{.EmployeeId}}</td>
-                        <td>{{.FirstName}}</td>
-                        <td>{{.LastName}}</td>
-                        <td>{{.Birthdate}}</td>
-                        <td>{{.Address}}</td>
-                        <td>{{.DepartementName}}</td>
-                        <td>{{.PostName}}</td>
-                        <td>{{.DateOfJoin}}</td>
-                        <td>{{.Phone}}</td>
-                        <td>{{.Email}}</td>
-                    </tr>
+                    <option value="{{.EmployeeId}}">{{.FirstName}} {{.LastName}}</option>
                     {{end}}
-                </tbody>
-            </table>
+                </select>
+                <button type="submit">Delete Employee</button>
+            </form>
+        </section>
+
+        <h2>Employee List</h2>
+        <section id="employee-list">
+            {{range .Employees}}
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h3>{{.FirstName}} {{.LastName}}</h3>
+                        <p>Department: {{.DepartementName}}</p>
+                        <p>Post: {{.PostName}}</p>
+                    </div>
+                    <div class="flip-card-back">
+                        <p>Email: {{.Email}}</p>
+                        <p>Phone: {{.Phone}}</p>
+                        <p>Address: {{.Address}}</p>
+                        <p>Birthdate: {{.Birthdate}}</p>
+                    </div>
+                </div>
+            </div>
+            {{end}}
         </section>
     </main>
-    <script src="scripts.js"></script>
+    <footer>
+        <p>&copy; 2023 Employee Management System</p>
+    </footer>
 </body>
+<script src="/static/script.js"></script>
 </html>
