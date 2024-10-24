@@ -91,6 +91,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
         }
+        emp.Birthdate = emp.Birthdate[:10]
         employees = append(employees, emp)
     }
 
@@ -357,6 +358,7 @@ func departmentsHandler(w http.ResponseWriter, r *http.Request) {
                 http.Error(w, err.Error(), http.StatusInternalServerError)
                 return
             }
+            emp.Birthdate = emp.Birthdate[:10]
             employees = append(employees, emp)
         }
         dept.Employees = employees
@@ -380,6 +382,186 @@ func departmentsHandler(w http.ResponseWriter, r *http.Request) {
     }
 }
 
+func postsHandler(w http.ResponseWriter, r *http.Request) {
+    db := dbConn()
+    defer db.Close()
+
+    postRows, err := db.Query("SELECT PostId, Name FROM post")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    defer postRows.Close()
+
+    type Post struct {
+        PostId int
+        Name   string
+        Employees []Employee
+    }
+
+    var posts []Post
+
+    for postRows.Next() {
+        var post Post
+        err := postRows.Scan(&post.PostId, &post.Name)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+        empRows, err := db.Query(`
+        SELECT 
+            employee.EmployeeId, 
+            employee.FirstName, 
+            employee.LastName, 
+            employee.Birthdate, 
+            employee.Address, 
+            departement.Name AS DepartmentName,
+            post.Name AS PostName, 
+            employee.DateOfJoin, 
+            employee.Phone, 
+            employee.Email
+        FROM 
+            employee
+            INNER JOIN departement ON employee.DepartementId = departement.DepartementId
+            INNER JOIN post ON employee.PostId = post.PostId
+        WHERE
+            employee.PostId = ?
+        `, post.PostId)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+        defer empRows.Close()
+
+        var employees []Employee
+        for empRows.Next() {
+            var emp Employee
+            err := empRows.Scan(&emp.EmployeeId, &emp.FirstName, &emp.LastName, &emp.Birthdate, &emp.Address, &emp.DepartementName, &emp.PostName, &emp.DateOfJoin, &emp.Phone, &emp.Email)
+            if err != nil {
+                http.Error(w, err.Error(), http.StatusInternalServerError)
+                return
+            }
+            emp.Birthdate = emp.Birthdate[:10]
+            employees = append(employees, emp)
+        }
+        post.Employees = employees
+        posts = append(posts, post)
+    }
+
+    data := struct {
+        Posts []Post
+    }{
+        Posts: posts,
+    }
+
+    tmpl, err := template.ParseFiles("templates/posts.html")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    err = tmpl.Execute(w, data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}
+
+func managerHandler(w http.ResponseWriter, r *http.Request) {
+    db := dbConn()
+    defer db.Close()
+
+    managersRows, err := db.Query(`
+        SELECT
+            employee.EmployeeId,
+            employee.FirstName,
+            employee.LastName
+        FROM
+            employee
+            INNER JOIN post ON employee.PostId = post.PostId
+        WHERE 
+            post.PostId = 1
+    `)
+            
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    defer managersRows.Close()
+
+    type Manager struct {
+        EmployeeId int
+        FirstName string
+        LastName  string
+        Employees []Employee
+    }
+
+    var managers []Manager
+
+    for managersRows.Next() {
+        var manager Manager
+        err := managersRows.Scan(&manager.EmployeeId, &manager.FirstName, &manager.LastName)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+        empRows, err := db.Query(`
+        SELECT 
+            employee.EmployeeId, 
+            employee.FirstName, 
+            employee.LastName, 
+            employee.Birthdate, 
+            employee.Address, 
+            departement.Name AS DepartmentName,
+            post.Name AS PostName, 
+            employee.DateOfJoin, 
+            employee.Phone, 
+            employee.Email
+        FROM 
+            employee
+            INNER JOIN post ON employee.PostId = post.PostId
+            INNER JOIN departement ON employee.DepartementId = departement.DepartementId
+            INNER JOIN hierarchy ON employee.EmployeeId = hierarchy.EmployeeId
+        WHERE
+            hierarchy.ManagerId = ?
+        `, manager.EmployeeId)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+        defer empRows.Close()
+
+        var employees []Employee
+        for empRows.Next() {
+            var emp Employee
+            err := empRows.Scan(&emp.EmployeeId, &emp.FirstName, &emp.LastName, &emp.Birthdate, &emp.Address, &emp.DepartementName, &emp.PostName, &emp.DateOfJoin, &emp.Phone, &emp.Email)
+            if err != nil {
+                http.Error(w, err.Error(), http.StatusInternalServerError)
+                return
+            }
+            emp.Birthdate = emp.Birthdate[:10]
+            employees = append(employees, emp)
+        }
+        manager.Employees = employees
+        managers = append(managers, manager)
+    }
+    data := struct {
+        Managers []Manager
+    }{
+        Managers: managers,
+    }
+
+    tmpl, err := template.ParseFiles("templates/managers.html")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    err = tmpl.Execute(w, data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}
+
 func main() {
     fs := http.FileServer(http.Dir("./static"))
     http.Handle("/static/", http.StripPrefix("/static/", fs))
@@ -387,8 +569,8 @@ func main() {
     http.HandleFunc("/add-employee", addEmployeeHandler)
     http.HandleFunc("/delete-employee", deleteEmployeeHandler)
     http.HandleFunc("/departments",departmentsHandler)
-    //http.HandleFunc("/posts",postsHandler)
-    //http.HandleFunc("/manager",managerHandler)
+    http.HandleFunc("/posts",postsHandler)
+    http.HandleFunc("/managers",managerHandler)
     //http.HandleFunc("/employees",employeesHandler)
 	fmt.Println("Starting server on :8080")
     fmt.Println("http://localhost:8080")

@@ -15,8 +15,8 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/departments">Departments</a></li>
                 <li><a href="/posts">Posts</a>
-                <li><a href="/employees">Managers</a>
-                <li><a href="/manage">Manage Employee</a></li>
+                <li><a href="/managers">Managers</a>
+                <li><a href="/manage">Manage Business</a></li>
             </ul>
         </nav>
     </header>
@@ -79,7 +79,7 @@
         <h2>Employee List</h2>
         <section id="employee-list">
             {{range .Employees}}
-            <div class="flip-card">
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
                 <div class="flip-card-inner">
                     <div class="flip-card-front">
                         <h3>{{.FirstName}} {{.LastName}}</h3>

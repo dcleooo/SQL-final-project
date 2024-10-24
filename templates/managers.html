@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    
+</head>
+<body>
+    <header>
+        <h1>Employee Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/departments">Departments</a></li>
+                <li><a href="/posts">Posts</a>
+                <li><a href="/managers">Managers</a>
+                <li><a href="/manage">Manage Business</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Managers</h2>
+            {{range .Managers}}
+                <h3>{{.FirstName}} {{.LastName}}</h3>
+            <section id="employee-list">
+                {{if eq (len .Employees) 0}}
+                    <p>No employees under this manager</p>
+                {{else}}
+                    {{range .Employees}}
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <h3>{{.FirstName}} {{.LastName}}</h3>
+                                <p>Department: {{.DepartementName}}</p>
+                                <p>Post: {{.PostName}}</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <p>Email: {{.Email}}</p>
+                                <p>Phone: {{.Phone}}</p>
+                                <p>Address: {{.Address}}</p>
+                                <p>Birthdate: {{.Birthdate}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+                {{end}}
+            </section>
+            {{end}}
+        </section>
+        
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Employee Management System</p>
+    </footer>
+</body>
+<script src="/static/script.js"></script>
+</html>
