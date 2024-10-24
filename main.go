@@ -11,6 +11,8 @@ func main() {
     fs := http.FileServer(http.Dir("./static"))
     http.Handle("/static/", http.StripPrefix("/static/", fs))
     http.HandleFunc("/", src.HomeHandler)
+	http.HandleFunc("/employee", src.EmployeeHandler)
+	http.HandleFunc("/add", src.AddHandler)
     http.HandleFunc("/add-employee", src.AddEmployeeHandler)
     http.HandleFunc("/delete-employee", src.DeleteEmployeeHandler)
     http.HandleFunc("/departments", src.DepartmentsHandler)

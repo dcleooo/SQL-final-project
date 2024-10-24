@@ -61,7 +61,7 @@ func EmployeeHandler(w http.ResponseWriter, r *http.Request) {
         Employees: employees,
     }
 
-    tmpl, err := template.ParseFiles("templates/employee.html")
+    tmpl, err := template.ParseFiles("./templates/employee.html")
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
