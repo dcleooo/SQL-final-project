@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1><a href="/">Employee Management System</a></h1>
+        <nav>
+            <ul>
+                <li><a href="/employee">All Employee</a></li>
+                <li><a href="/departments">Departments</a></li>
+                <li><a href="/posts">Posts</a>
+                <li><a href="/managers">Managers</a>
+                <li><a href="/add">Manage Business</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Employee List</h2>
+        <section id="employee-list">
+            {{range .Employees}}
+            <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <div class="card-actions">
+                            <a href="/edit-employee?id={{.EmployeeId}}&redirect=" class="edit"><i class="fas fa-pencil-alt"></i></a>
+                            <a href="/delete-employee?id={{.EmployeeId}}&redirect=" class="delete"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                        <h3>{{.FirstName}} {{.LastName}}</h3>
+                        <p>Department: {{.DepartementName}}</p>
+                        <p>Post: {{.PostName}}</p>
+                    </div>
+                    <div class="flip-card-back">
+                        <p>Email: {{.Email}}</p>
+                        <p>Phone: {{.Phone}}</p>
+                        <p>Address: {{.Address}}</p>
+                        <p>Birthdate: {{.Birthdate}}</p>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </section>
+        
+    </main>
+    <footer>
+        <p>&copy; 2024 Employee Management System</p>
+    </footer>
+</body>
+</html>

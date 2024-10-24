@@ -6,7 +6,6 @@
     <title>Employee Management</title>
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
 </head>
 <body>
     <header>
@@ -15,33 +14,33 @@
             <ul>
                 <li><a href="/employee">All Employee</a></li>
                 <li><a href="/departments">Departments</a></li>
-                <li><a href="/posts">Posts</a>
-                <li><a href="/managers">Managers</a>
+                <li><a href="/posts">Posts</a></li>
+                <li><a href="/managers">Managers</a></li>
                 <li><a href="/add">Add Employee</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
+        {{range .Departments}}
         <section>
-            <h2>Managers</h2>
-            {{range .Managers}}
-                <h3>{{.FirstName}} {{.LastName}}</h3>
-            <section id="employee-list">
+            <h2>{{.Name}}</h2>
+            <div id="employee-list">
                 {{if eq (len .Employees) 0}}
-                    <p>No employees under this manager</p>
+                    <p>No employees under this department</p>
                 {{else}}
                     {{range .Employees}}
                     <div class="flip-card" onclick="this.classList.toggle('flipped')">
                         <div class="flip-card-inner">
                             <div class="flip-card-front">
                                 <div class="card-actions">
-                                    <a href="/edit-employee?id={{.EmployeeId}}&redirect=/managers" class="edit"><i class="fas fa-pencil-alt"></i></a>
-                                    <a href="/delete-employee?id={{.EmployeeId}}&redirect=/managers" class="delete"><i class="fas fa-trash-alt"></i></a>
+                                    <a href="/edit-employee?id={{.EmployeeId}}&redirect=/departments" class="edit"><i class="fas fa-pencil-alt"></i></a>
+                                    <a href="/delete-employee?id={{.EmployeeId}}&redirect=/departments" class="delete"><i class="fas fa-trash-alt"></i></a>
                                 </div>
                                 <h3>{{.FirstName}} {{.LastName}}</h3>
                                 <p>Department: {{.DepartementName}}</p>
                                 <p>Post: {{.PostName}}</p>
+                                {{if .IsHead}}<p>Role: Head of Department</p>{{end}}
                             </div>
                             <div class="flip-card-back">
                                 <p>Email: {{.Email}}</p>
@@ -53,12 +52,10 @@
                     </div>
                     {{end}}
                 {{end}}
-            </section>
-            {{end}}
+            </div>
         </section>
-        
+        {{end}}
     </main>
-
     <footer>
         <p>&copy; 2024 Employee Management System</p>
     </footer>
